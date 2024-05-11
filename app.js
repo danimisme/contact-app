@@ -2,6 +2,7 @@ const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 
 const { body, validationResult, check } = require("express-validator");
+const methodOverride = require("method-override");
 
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
@@ -9,9 +10,13 @@ const flash = require("connect-flash");
 
 require("./utils/db");
 const Contact = require("./models/contact");
+const { ObjectID } = require("mongodb");
 
 const app = express();
 const port = 3000;
+
+//setup method override
+app.use(methodOverride("_method"));
 
 //Set up View Engine
 app.set("view engine", "ejs");
@@ -96,6 +101,14 @@ app.post(
     }
   }
 );
+
+//proses delete contact
+app.delete("/contact", (req, res) => {
+  Contact.deleteOne({ _id: req.body.id }).then((result) => {
+    req.flash("msg", "Data contact berhasil dihapus");
+    res.redirect("/contact");
+  });
+});
 
 //Halaman Detail Contact
 app.get("/contact/:id", async (req, res) => {

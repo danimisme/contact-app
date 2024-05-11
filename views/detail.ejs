@@ -24,12 +24,20 @@
             <a href="/contact/edit/<%= contact.nama %>" class="btn btn-info"
               >Ubah</a
             >
-            <a
-              href="/contact/delete/<%= contact.nama %>"
-              class="btn btn-danger"
-              onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
-              >Hapus</a
+            <form
+              action="/contact?_method=DELETE"
+              method="POST"
+              class="d-inline"
             >
+              <input type="hidden" name="id" value="<%= contact._id %>" />
+              <button
+                type="submit"
+                class="btn btn-danger"
+                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+              >
+                Hapus
+              </button>
+            </form>
           </div>
           <a href="/contact" class="card-link d-block mt-3"
             ><i class="bi bi-arrow-left"></i>Kembali</a
