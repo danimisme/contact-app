@@ -56,6 +56,14 @@ app.get("/contact", async (req, res) => {
   });
 });
 
+//Halaman form tambah data contact
+app.get("/contact/add", (req, res) => {
+  res.render("add-contact", {
+    layout: "layouts/main-layout",
+    title: "Add Contact",
+  });
+});
+
 //Halaman Detail Contact
 app.get("/contact/:id", async (req, res) => {
   const contact = await Contact.findById(req.params.id);
