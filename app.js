@@ -110,6 +110,16 @@ app.delete("/contact", (req, res) => {
   });
 });
 
+//halaman form ubah data contact
+app.get("/contact/edit/:id", async (req, res) => {
+  const contact = await Contact.findById(req.params.id);
+  res.render("edit-contact", {
+    layout: "layouts/main-layout",
+    title: "Edit Contact",
+    contact,
+  });
+});
+
 //Halaman Detail Contact
 app.get("/contact/:id", async (req, res) => {
   const contact = await Contact.findById(req.params.id);
