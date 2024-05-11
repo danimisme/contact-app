@@ -56,6 +56,16 @@ app.get("/contact", async (req, res) => {
   });
 });
 
+//Halaman Detail Contact
+app.get("/contact/:id", async (req, res) => {
+  const contact = await Contact.findById(req.params.id);
+  res.render("detail", {
+    layout: "layouts/main-layout",
+    title: "Contact Detail",
+    contact,
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
