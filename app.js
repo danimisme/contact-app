@@ -18,6 +18,14 @@ app.get("/", (req, res) => {
   });
 });
 
+//Halaman About
+app.get("/about", (req, res) => {
+  res.render("about", {
+    layout: "layouts/main-layout",
+    title: "About",
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
