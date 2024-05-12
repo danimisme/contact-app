@@ -142,8 +142,8 @@ app.put(
   [
     body("nama").custom(async (value, { req }) => {
       const duplikat = await Contact.findOne({ nama: value });
-      if (value !== req.body.oldName && duplikat) {
-        throw new Error("Contact sudah terdaftar");
+      if (value !== req.body.oldNama && duplikat) {
+        throw new Error(`Contact ${value} sudah terdaftar`);
       }
       return true;
     }),
