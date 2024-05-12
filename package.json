@@ -4,7 +4,8 @@
   "description": "\"create simple contact app using node js, express js and mongo db \"",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "danimisme",
   "license": "ISC",
