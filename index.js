@@ -16,6 +16,19 @@ const { ObjectID } = require("mongodb");
 const app = express();
 const port = 3000;
 
+const MemoryStore = require("memorystore")(session);
+
+app.use(
+  session({
+    cookie: { maxAge: 86400000 },
+    store: new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }),
+    resave: false,
+    secret: "keyboard cat",
+  })
+);
+
 //setup method override
 app.use(methodOverride("_method"));
 
