@@ -11,11 +11,13 @@ const flash = require("connect-flash");
 
 require("./utils/db");
 const Contact = require("./models/contact");
+const User = require("./models/user");
 
 const app = express();
 const port = 3000;
 
 const MemoryStore = require("memorystore")(session);
+const bcrypt = require("bcrypt");
 
 app.use(
   session({
@@ -51,7 +53,63 @@ app.use(
 );
 app.use(flash());
 
+//router contact
 app.use("/contact", require("./routes/contact"));
+
+app.get("/auth/register", (req, res) => {
+  res.render("auth/register", {
+    layout: "layouts/main-layout",
+    title: "Register",
+    errors: req.flash("errors"),
+    msg: req.flash("msg"),
+  });
+});
+
+//PROSERS REGISTER
+app.post(
+  "/auth/register",
+  [
+    check("name", "Name is required").not().isEmpty(),
+    check("email", "Email tidak valid").isEmail(),
+    check("password", "Password minimal 5 karakter").isLength({ min: 5 }),
+  ],
+  check("nohp", "Nomor Handphone tidak valid").isMobilePhone("id-ID"),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(req.body);
+      res.render("auth/register", {
+        layout: "layouts/main-layout",
+        title: "Register",
+        errors: errors.array(),
+      });
+    } else {
+      const { name, email, password, nohp } = req.body;
+      const hash = bcrypt.hashSync(password, 10);
+      const user = new User({
+        name,
+        email,
+        nohp,
+        password: hash,
+      });
+      const duplikat = await User.findOne({ email });
+      console.log(duplikat);
+      if (duplikat) {
+        req.flash("msg", "Register gagal , Email sudah terdaftar");
+        res.redirect("/auth/register");
+      } else {
+        try {
+          await user.save();
+          req.flash("msg", "Register Berhasil silahkan login");
+          res.redirect("/auth/login");
+        } catch (error) {
+          req.flash("errors", error.message);
+          res.redirect("/auth/register");
+        }
+      }
+    }
+  }
+);
 
 //Halaman Home
 app.get("/", (req, res) => {
