@@ -2,6 +2,30 @@ const express = require("express");
 const router = express.Router();
 const { body, validationResult, check } = require("express-validator");
 const Contact = require("../models/contact");
+const User = require("../models/user");
+const bcrypt = require("bcrypt");
+
+const authentication = async (req, res, next) => {
+  if (!req.session.token) {
+    console.log("belum login");
+    res.redirect("/auth/login");
+  } else {
+    const email = req.session.email;
+    const token = req.session.token;
+    const user = await User.findOne({ email });
+    const match = bcrypt.compareSync(user.email, token);
+    console.log(user.email, token);
+    if (match) {
+      console.log("token valid");
+      next();
+    } else {
+      console.log("token invalid");
+      res.redirect("/auth/login");
+    }
+  }
+};
+
+router.use(authentication);
 
 //Halaman Contact
 router.get("/", async (req, res) => {
@@ -11,6 +35,7 @@ router.get("/", async (req, res) => {
     title: "Contact List",
     contacts,
     msg: req.flash("msg"),
+    successMessage: req.flash("successMessage"),
   });
 });
 

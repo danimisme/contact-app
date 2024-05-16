@@ -2,6 +2,12 @@
   <div class="row">
     <div class="col">
       <div class="col-md-8 mx-auto">
+        <% if (typeof successMessage !== 'undefined' && successMessage.length >
+        0 ) { %>
+        <div class="alert alert-success" role="alert">
+          <%= successMessage %>
+        </div>
+        <% } %>
         <h2 class="fw-semibold mb-3">Daftar Contact</h2>
 
         <% if (msg.length > 0) { %>

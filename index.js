@@ -111,11 +111,59 @@ app.post(
   }
 );
 
+app.get("/auth/login", (req, res) => {
+  res.render("auth/login", {
+    layout: "layouts/main-layout",
+    title: "Login",
+    errors: req.flash("errors"),
+    msg: req.flash("msg"),
+  });
+});
+
+//PROSSES LOGIN
+app.post(
+  "/auth/login",
+  [
+    check("email", "Email tidak valid").isEmail(),
+    check("password", "Password harus diisi").not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.render("auth/login", {
+        layout: "layouts/main-layout",
+        title: "Login",
+        errors: errors.array(),
+      });
+    } else {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        req.flash("msg", "Email tidak terdaftar");
+        res.redirect("/auth/login");
+      } else {
+        const match = bcrypt.compareSync(password, user.password);
+        if (!match) {
+          req.flash("msg", "Password salah");
+          res.redirect("/auth/login");
+        } else {
+          req.session.token = bcrypt.hashSync(email, 10);
+          req.session.email = user.email;
+          req.flash("successMessage", "Login Berhasil !");
+          res.redirect("/contact");
+        }
+      }
+    }
+  }
+);
+
 //Halaman Home
 app.get("/", (req, res) => {
   res.render("index", {
     layout: "layouts/main-layout",
     title: "Home",
+    user: req.session.user,
+    msg: req.flash("msg"),
   });
 });
 
