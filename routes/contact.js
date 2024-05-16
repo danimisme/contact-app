@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const authentication = async (req, res, next) => {
   if (!req.session.token) {
     console.log("belum login");
+    req.flash("msg", "Anda harus login untuk mengakses kontak !");
     res.redirect("/auth/login");
   } else {
     const email = req.session.email;
